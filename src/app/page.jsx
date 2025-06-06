@@ -4,14 +4,14 @@ import { useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "@/configs/axios.mjs";
 import Swal from "sweetalert2";
-import { Download, IdCard, QrCode } from "lucide-react";
+import { Download, IdCard, QrCode, ScanQrCode } from "lucide-react";
 import { toPng } from "html-to-image";
 import { cryptoEncode } from "@/configs/crypto.mjs";
 import Image from "next/image";
 
 export default function Home() {
-  const [citizenId, setCitizenId] = useState("123456"); // รับค่าที่กรอก
-  const [result, setResult] = useState("123456"); // QR Code Output
+  const [citizenId, setCitizenId] = useState(""); // รับค่าที่กรอก
+  const [result, setResult] = useState(""); // QR Code Output
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [seat, setSeat] = useState("");
@@ -130,12 +130,13 @@ export default function Home() {
         {result && (
           <div className="flex flex-col items-center gap-4 my-4">
             <div className="flex flex-col items-center gap-4 bg-white w-full rounded-2xl pb-4 overflow-hidden shadow" ref={qrRef}>
-              <div className="w-full p-2 bg-[#056839] flex gap-2 items-center justify-around">
-                <Image src="/image/moph-logo.png" width={40} height={40} alt="moph-logo" />
+              <div className="w-full p-2 bg-[#056839] flex gap-2 items-center justify-around shadow">
+                <Image src="/image/moph-logo.png" width={50} height={50} alt="moph-logo" />
                 <div>
                   <p className="font-semibold text-2xl text-white">โรงพยาบาลอากาศอำนวย</p>
                   <p className="font-semibold text-sm text-white">Akatumnuay Hospital</p>
                 </div>
+                <ScanQrCode className="text-white" />
               </div>
               <QRCodeSVG
                 value={result}
@@ -146,19 +147,27 @@ export default function Home() {
                 marginSize={4}
                 className="border border-gray-200 rounded-2xl shadow"
               />
-              <p className="text-center text-2xl font-semibold">คุณ {person} 1234568</p>
-              <p className="text-center text-2xl font-semibold">ที่นั่งหมายเลข <span className="font-extrabold text-3xl underline">{seat}</span></p>
+              <div className="flex flex-col gap-1">
+                <p className="text-center text-2xl font-semibold">คุณ {person}</p>
+                <p className="text-center text-xl font-semibold">ที่นั่งหมายเลข <span className="font-extrabold text-2xl underline">{seat}</span></p>
+              </div>
+
+              <p className="text-[10px] text-gray-400 mt-2">
+                &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
+              </p>
             </div>
             <button className="flex items-center justify-center gap-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 hover:cursor-pointer transition shadow" onClick={hdlDownload}><Download /> ดาวน์โหลด</button>
           </div>
         )}
       {/* </div> */}
 
-      <div className="flex items-center justify-center">
-        <p className="text-[12px] text-gray-400">
-          &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
-        </p>
-      </div>
+      {!result && (
+        <div className="flex items-center justify-center">
+          <p className="text-[12px] text-gray-400">
+            &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
+          </p>
+        </div>
+      )}
     </div>
   );
 }
