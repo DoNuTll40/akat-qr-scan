@@ -16,6 +16,7 @@ export default function Home() {
   const [successMessage, setSuccessMessage] = useState("");
   const [person, setPerson] = useState(null);
   const [score, setScore] = useState(0);
+  const [personPass, setPersonPass] = useState(0);
 
   useEffect(() => {
     getResult();
@@ -30,8 +31,6 @@ export default function Home() {
       console.log(err)
     }
   }
-
-  let personPass = 0
 
   const hdlSubmit = async (data) => {
     try {
@@ -51,8 +50,8 @@ export default function Home() {
       setStatusSuccess(true);
       setStatusError(false);
       setSuccessMessage(rs.data.message);
+      setPersonPass((prev) => prev + 1);
       Swal.close();
-      personPass++
     } catch (err) {
       Swal.close();
       console.error(err);

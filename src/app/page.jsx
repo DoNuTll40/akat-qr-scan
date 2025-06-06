@@ -8,6 +8,7 @@ import { Download, IdCard, QrCode, ScanQrCode } from "lucide-react";
 import { toPng } from "html-to-image";
 import { cryptoEncode } from "@/configs/crypto.mjs";
 import Image from "next/image";
+import domtoimage from 'dom-to-image-more';
 
 export default function Home() {
   const [citizenId, setCitizenId] = useState(""); // รับค่าที่กรอก
@@ -79,12 +80,11 @@ export default function Home() {
     if (!qrRef.current) return;
 
     try {
-      await document.fonts.ready; // ✅ รอ font
-      await new Promise((r) => setTimeout(r, 100)); // ✅ รอให้ทุกอย่าง load
-
-      const dataUrl = await toPng(qrRef.current, {
-        cacheBust: true, // ✅ Safari ชอบ cache SVG
+      const dataUrl = await domtoimage.toPng(qrRef.current, {
+        quality: 1,
+        cacheBust: true,
       });
+      
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `qr-code-id-${citizenId}.png`;
