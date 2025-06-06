@@ -120,15 +120,11 @@ export default function Home() {
           <div className="w-1/2 overflow-hidden shadow rounded-xl">
             <Scanner
               sound
-              // allowMultiple
               onScan={onScan}
               onError={(error) => console.error(error)}
               constraints={{ facingMode: "environment" }}
               containerStyle={{ width: "100%", borderRadius: "0.75rem" }}
               videoStyle={{ width: "100%", borderRadius: "0.75rem" }}
-              // components={{
-              //   finder: true
-              // }}
             />
           </div>
 

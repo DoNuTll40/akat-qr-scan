@@ -79,7 +79,12 @@ export default function Home() {
     if (!qrRef.current) return;
 
     try {
-      const dataUrl = await toPng(qrRef.current);
+      await document.fonts.ready; // ✅ รอ font
+      await new Promise((r) => setTimeout(r, 100)); // ✅ รอให้ทุกอย่าง load
+
+      const dataUrl = await toPng(qrRef.current, {
+        cacheBust: true, // ✅ Safari ชอบ cache SVG
+      });
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `qr-code-id-${citizenId}.png`;
