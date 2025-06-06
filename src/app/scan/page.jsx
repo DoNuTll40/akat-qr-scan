@@ -125,7 +125,7 @@ export default function Home() {
         </div>
 
         {/* Scanner */}
-        <div className="w-full flex flex-row rounded-2xl justify-between gap-4 border border-gray-200 p-4 shadow bg-white">
+        <div className="w-full flex flex-col sm:flex-row rounded-2xl justify-between gap-4 border border-gray-200 p-4 shadow bg-white">
           {/* QR Scanner */}
           <div className="w-1/2 overflow-hidden shadow rounded-xl">
             <Scanner
