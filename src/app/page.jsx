@@ -123,7 +123,7 @@ export default function Home() {
               <input
                 className="border border-gray-200 py-2 px-3 rounded-lg w-full"
                 placeholder="หมายเลขบัตรประชาชน"
-                type="phone"
+                type="tel"
                 minLength="13"
                 maxLength="13"
                 value={citizenId}
