@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "@/configs/axios.mjs";
 import Swal from "sweetalert2";
-import { Download, IdCard, QrCode, ScanQrCode } from "lucide-react";
+import { Download, IdCard, MessageSquareWarning, QrCode, ScanQrCode } from "lucide-react";
 import { toPng } from "html-to-image";
 import { cryptoEncode } from "@/configs/crypto.mjs";
 import Image from "next/image";
@@ -80,7 +80,7 @@ export default function Home() {
     if (!qrRef.current) return;
 
     try {
-      const dataUrl = await domtoimage.toPng(qrRef.current, {
+      const dataUrl = await toPng(qrRef.current, {
         quality: 1,
         cacheBust: true,
       });
@@ -99,15 +99,23 @@ export default function Home() {
     }
   };
 
+  const isChrome = /Chrome/.test(navigator.userAgent) && !/Safari/.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+  console.log("Chrome:", isChrome);   // true if Chrome
+  console.log("Safari:", isSafari);   // true if Safari
+
   return (
-    <div className="max-w-[25rem] mx-auto pt-20 px-4">
-      <div className="w-full border-gray-200 h-13 flex justify-center items-center">
+    <div className="flex items-center justify-center h-screen">
+      <div className="max-w-[25rem] border border-gray-200 mx-auto p-4 bg-white rounded-2xl shadow">
+      <div className="w-full border-gray-200 flex flex-col justify-center items-center my-4">
         <p className="font-bold text-xl">ระบบสร้าง QR Code เข้ากิจกรรม</p>
+        <p className="text-sm text-red-500 pt-4 flex items-start"><span className="font-bold flex items-center gap-1 w-4/12"><MessageSquareWarning size={16} /> แจ้งเตือน</span>: เมื่อได้ QR Code แล้วโปรดแคปหน้าจอไว้ เพราะจะไม่สามารถสร้างใหม่ได้</p>
       </div>
 
       {/* <div className="border border-gray-200 shadow rounded-2xl p-4 flex flex-col gap-4"> */}
         {!result && (
-          <div className="flex flex-col gap-2 my-4">
+          <div className="flex flex-col gap-2 mb-4">
             <div className="flex gap-1 items-center">
               <IdCard size={20} strokeWidth={1.5} />
               <p className="font-semibold">กรอกหมายเลขบัตรประชาชน</p>
@@ -122,7 +130,7 @@ export default function Home() {
                 onChange={(e) => setCitizenId(e.target.value)}
               />
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:hover:bg-blue-500 disabled:opacity-40"
+              className="bg-blue-500 mt-3 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:hover:bg-blue-500 disabled:opacity-40"
               onClick={handleCheck}
               disabled={loading}
             >
@@ -138,7 +146,7 @@ export default function Home() {
               <div className="w-full p-2 bg-[#056839] flex gap-2 items-center justify-around shadow">
                 <Image src="/image/moph-logo.png" width={50} height={50} alt="moph-logo" />
                 <div>
-                  <p className="font-semibold text-2xl text-white">โรงพยาบาลอากาศอำนวย</p>
+                  <p className="font-semibold text-2xl text-white line-clamp-1">โรงพยาบาลอากาศอำนวย</p>
                   <p className="font-semibold text-sm text-white">Akatumnuay Hospital</p>
                 </div>
                 <ScanQrCode className="text-white" />
@@ -146,7 +154,7 @@ export default function Home() {
               <QRCodeSVG
                 value={result}
                 level="M"
-                size={256}
+                size={330}
                 title="QR Code"
                 includeMargin
                 marginSize={4}
@@ -161,18 +169,19 @@ export default function Home() {
                 &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
               </p>
             </div>
-            <button className="flex items-center justify-center gap-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 hover:cursor-pointer transition shadow" onClick={hdlDownload}><Download /> ดาวน์โหลด</button>
+            {isChrome && <button className="flex items-center justify-center gap-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 hover:cursor-pointer transition shadow" onClick={hdlDownload}><Download /> ดาวน์โหลด</button>}
           </div>
         )}
       {/* </div> */}
 
       {!result && (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center mt-5">
           <p className="text-[12px] text-gray-400">
             &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
           </p>
         </div>
       )}
+    </div>
     </div>
   );
 }
