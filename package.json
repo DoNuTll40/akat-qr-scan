@@ -1,0 +1,32 @@
+{
+  "name": "next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@yudiel/react-qr-scanner": "^2.3.1",
+    "axios": "^1.9.0",
+    "crypto-js": "^4.2.0",
+    "html-to-image": "^1.11.13",
+    "lucide-react": "^0.513.0",
+    "material-ripple-effects": "^2.0.1",
+    "moment": "^2.30.1",
+    "next": "15.3.3",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sweetalert2": "^11.22.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.3",
+    "tailwindcss": "^4"
+  }
+}
