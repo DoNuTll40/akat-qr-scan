@@ -84,7 +84,7 @@ export default function Home() {
         quality: 1,
         cacheBust: true,
       });
-      
+
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `qr-code-id-${citizenId}.png`;

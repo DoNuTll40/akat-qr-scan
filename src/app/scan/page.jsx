@@ -7,6 +7,7 @@ import "moment/locale/th";
 import axios from "@/configs/axios.mjs";
 import Swal from "sweetalert2";
 import { cryptoDecode } from "@/configs/crypto.mjs";
+import { ScanQrCode } from "lucide-react";
 
 export default function Home() {
   const [result, setResult] = useState("");
@@ -87,10 +88,10 @@ export default function Home() {
   };
 
   return (
-    <div className="h-dvh w-full flex flex-col gap-4 shrink-0">
+    <div className="w-full flex flex-col gap-4 shrink-0 font-notothai">
       {/* Header */}
       <div className="w-full border border-gray-200 shadow h-13 flex justify-between items-center px-4">
-        <p>ระบบสแกน QR Code เข้ากิจกรรม</p>
+        <p className="font-bold text-lg flex gap-2 items-center"><ScanQrCode /> ระบบสแกน QR Code เข้ากิจกรรม</p>
       </div>
 
       {/* Content */}
