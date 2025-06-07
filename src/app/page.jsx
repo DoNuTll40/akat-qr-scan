@@ -78,48 +78,51 @@ export default function Home() {
     }
   };
 
-const hdlDownload = async () => {
-  if (!qrRef.current) {
-    console.error("Error: QR Code element reference is null.");
-    return;
-  }
+  const hdlDownload = async () => {
+    if (!qrRef.current) {
+      console.error("Error: QR Code element reference is null.");
+      return;
+    }
 
-  try {
-    const clone = qrRef.current.cloneNode(true);
-    clone.style.width = `${qrRef.current.offsetWidth}px`;
-    clone.style.height = `${qrRef.current.offsetHeight}px`;
+    try {
 
-    const paragraphs = clone.querySelectorAll("p");
-    paragraphs.forEach(p => {
-      p.style.margin = "0";
-      p.style.lineHeight = "1.2";
-    });
+      await document.fonts.ready;
 
-    document.body.appendChild(clone);
+      const clone = qrRef.current.cloneNode(true);
+      clone.style.width = `${qrRef.current.offsetWidth}px`;
+      clone.style.height = `${qrRef.current.offsetHeight}px`;
 
-    const canvas = await html2canvas(clone, {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: null,
-    });
+      const paragraphs = clone.querySelectorAll("p");
+      paragraphs.forEach(p => {
+        p.style.margin = "0";
+        p.style.lineHeight = "1.2";
+      });
 
-    document.body.removeChild(clone);
+      document.body.appendChild(clone);
 
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = image;
-    const filename = `qr-code-id-${citizenId}.png`;
-    link.download = filename;
-    link.click();
-  } catch (err) {
-    console.error("Failed to download QR Code:", err);
-    Swal.fire({
-      icon: "error",
-      title: "ผิดพลาด",
-      text: "เกิดข้อผิดพลาดขณะดาวน์โหลด QR Code กรุณาลองใหม่อีกครั้ง",
-    });
-  }
-};
+      const canvas = await html2canvas(clone, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: null,
+      });
+
+      document.body.removeChild(clone);
+
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      const filename = `qr-code-id-${citizenId}.png`;
+      link.download = filename;
+      link.click();
+    } catch (err) {
+      console.error("Failed to download QR Code:", err);
+      Swal.fire({
+        icon: "error",
+        title: "ผิดพลาด",
+        text: "เกิดข้อผิดพลาดขณะดาวน์โหลด QR Code กรุณาลองใหม่อีกครั้ง",
+      });
+    }
+  };
 
 
   const isChrome = /Chrome/.test(navigator.userAgent) && !/Safari/.test(navigator.userAgent);

@@ -26,6 +26,9 @@ export default function ScanPage() {
   const [userInfo, setUserInfo] = useState([]);
   const [user, setUser] = useState(null);
 
+  const [cameras, setCameras] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+
   useEffect(() => {
     getResult();
   }, [])
@@ -144,6 +147,24 @@ export default function ScanPage() {
     }
   };
 
+    useEffect(() => {
+    // ต้องเรียก getUserMedia ก่อน
+    navigator.mediaDevices
+        .getUserMedia({ video: true }) // ขอแค่เปิดกล้องเพื่อให้ได้ permission
+        .then(() => navigator.mediaDevices.enumerateDevices())
+        .then((devices) => {
+        const videoInputs = devices.filter((device) => device.kind === "videoinput");
+        setCameras(videoInputs);
+        if (videoInputs.length > 0) {
+            setSelectedDeviceId(videoInputs[0].deviceId);
+        }
+        })
+        .catch((err) => {
+        console.error("Camera access error", err);
+        alert("ไม่สามารถเข้าถึงกล้องได้: " + err.message);
+        });
+    }, []);
+
   function getDisplayName(fullname) {
     const prefixes = ['นาย', 'นางสาว', 'นาง', 'น.ส.', 'ด.ช.', 'ด.ญ.', 'น.ส', 'นางฯ']; // เพิ่มเติมได้
     let name = fullname;
@@ -218,15 +239,27 @@ export default function ScanPage() {
         <div className="w-full flex flex-col sm:flex-row rounded-2xl justify-between gap-4 border border-gray-200 p-4 shadow bg-white">
           {/* QR Scanner */}
           
-          <div className="w-full sm:w-1/2 overflow-hidden shadow rounded-xl">
+          <div className="w-full sm:w-1/2 overflow-hidden shadow rounded-xl relative">
             <Scanner
               sound
               onScan={onScan}
               onError={(error) => console.error(error)}
-              constraints={{ facingMode: "environment" }}
+              constraints={{ deviceId: selectedDeviceId }}
               containerStyle={{ width: "100%", borderRadius: "0.75rem" }}
               videoStyle={{ width: "100%", borderRadius: "0.75rem" }}
             />
+
+            <select
+                onChange={(e) => setSelectedDeviceId(e.target.value)}
+                className=" absolute top-0"
+                value={selectedDeviceId || ""}
+            >
+                {cameras.map((camera) => (
+                <option key={camera.deviceId} value={camera.deviceId}>
+                    {camera.label || `Camera ${camera.deviceId}`}
+                </option>
+                ))}
+            </select>
           </div>
 
           {/* Result Panel */}
