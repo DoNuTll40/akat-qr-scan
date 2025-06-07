@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "@/configs/axios.mjs";
 import Swal from "sweetalert2";
-import { Download, IdCard, MessageSquareWarning, QrCode, ScanQrCode } from "lucide-react";
-import { toPng } from "html-to-image";
+import { Download, IdCard, MessageSquareWarning, ScanQrCode } from "lucide-react";
 import { cryptoEncode } from "@/configs/crypto.mjs";
 import Image from "next/image";
-import domtoimage from 'dom-to-image-more';
+import html2canvas from "html2canvas-pro";
+import Ripple from "material-ripple-effects";
 
 export default function Home() {
   const [citizenId, setCitizenId] = useState(""); // รับค่าที่กรอก
@@ -18,6 +18,8 @@ export default function Home() {
   const [seat, setSeat] = useState("");
   const [person, setPerson] = useState(null);
   const qrRef = useRef(null);
+
+  const ripple = new Ripple();
 
   const handleCheck = async () => {
     try {
@@ -76,28 +78,49 @@ export default function Home() {
     }
   };
 
-  const hdlDownload = async () => {
-    if (!qrRef.current) return;
+const hdlDownload = async () => {
+  if (!qrRef.current) {
+    console.error("Error: QR Code element reference is null.");
+    return;
+  }
 
-    try {
-      const dataUrl = await toPng(qrRef.current, {
-        quality: 1,
-        cacheBust: true,
-      });
+  try {
+    const clone = qrRef.current.cloneNode(true);
+    clone.style.width = `${qrRef.current.offsetWidth}px`;
+    clone.style.height = `${qrRef.current.offsetHeight}px`;
 
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = `qr-code-id-${citizenId}.png`;
-      link.click();
-    } catch (err) {
-      console.error("ไม่สามารถดาวน์โหลด QR Code ได้", err);
-      Swal.fire({
-        icon: "error",
-        title: "ผิดพลาด",
-        text: "เกิดข้อผิดพลาดขณะดาวน์โหลด QR Code",
-      });
-    }
-  };
+    const paragraphs = clone.querySelectorAll("p");
+    paragraphs.forEach(p => {
+      p.style.margin = "0";
+      p.style.lineHeight = "1.2";
+    });
+
+    document.body.appendChild(clone);
+
+    const canvas = await html2canvas(clone, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: null,
+    });
+
+    document.body.removeChild(clone);
+
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    const filename = `qr-code-id-${citizenId}.png`;
+    link.download = filename;
+    link.click();
+  } catch (err) {
+    console.error("Failed to download QR Code:", err);
+    Swal.fire({
+      icon: "error",
+      title: "ผิดพลาด",
+      text: "เกิดข้อผิดพลาดขณะดาวน์โหลด QR Code กรุณาลองใหม่อีกครั้ง",
+    });
+  }
+};
+
 
   const isChrome = /Chrome/.test(navigator.userAgent) && !/Safari/.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -130,8 +153,9 @@ export default function Home() {
                 onChange={(e) => setCitizenId(e.target.value)}
               />
             <button
-              className="bg-blue-500 mt-3 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:hover:bg-blue-500 disabled:opacity-40"
+              className="bg-[#056839] mt-3 text-white px-4 py-2 rounded-lg hover:bg-[#056839] transition disabled:hover:bg-[#056839] disabled:opacity-40"
               onClick={handleCheck}
+              onMouseUp={(e) => ripple.create(e, "rgba(255, 255, 255, 0.2)")}
               disabled={loading}
             >
               {!loading ? "ตรวจสอบและสร้าง QR Code" : "กำลังโหลดข้อมูล...."}
@@ -143,11 +167,11 @@ export default function Home() {
         {result && (
           <div className="flex flex-col items-center gap-4 my-4">
             <div className="flex flex-col items-center gap-4 bg-white w-full rounded-2xl pb-4 overflow-hidden shadow" ref={qrRef}>
-              <div className="w-full p-2 bg-[#056839] flex gap-2 items-center justify-around shadow">
+              <div className="w-full p-2 bg-[#056839] flex gap-2 items-center justify-around shadow h-14">
                 <Image src="/image/moph-logo.png" width={50} height={50} alt="moph-logo" />
-                <div>
-                  <p className="font-semibold text-2xl text-white line-clamp-1">โรงพยาบาลอากาศอำนวย</p>
-                  <p className="font-semibold text-sm text-white">Akatumnuay Hospital</p>
+                <div className="flex flex-col gap-0">
+                  <p className="font-semibold text-2xl text-white line-clamp-1 my-0 leading-none">โรงพยาบาลอากาศอำนวย</p>
+                  <p className="font-semibold text-sm text-white my-0">Akatumnuay Hospital</p>
                 </div>
                 <ScanQrCode className="text-white" />
               </div>
@@ -158,18 +182,19 @@ export default function Home() {
                 title="QR Code"
                 includeMargin
                 marginSize={4}
-                className="border border-gray-200 rounded-2xl shadow"
+                className="border border-[#E5E7EB] rounded-2xl shadow"
+                style={{ transform: "scale(1)" }} // ป้องกัน scale ซ้อน
               />
               <div className="flex flex-col gap-1">
                 <p className="text-center text-2xl font-semibold">คุณ {person}</p>
                 <p className="text-center text-xl font-semibold">ที่นั่งหมายเลข <span className="font-extrabold text-2xl underline">{seat}</span></p>
               </div>
 
-              <p className="text-[10px] text-gray-400 mt-2">
+              <p className="text-[10px] text-[#99A1AF] mt-2">
                 &copy; Copyright 2025 กลุ่มงานสุขภาพดิจิทัล โรงพยาบาลอากาศอำนวย
               </p>
             </div>
-            {isChrome && <button className="flex items-center justify-center gap-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 hover:cursor-pointer transition shadow" onClick={hdlDownload}><Download /> ดาวน์โหลด</button>}
+            <button onMouseUp={(e) => ripple.create(e, "rgba(0, 0, 0, 0.2)")} className="flex items-center justify-center gap-1 bg-white text-gray-500 border border-gray-500 px-8 py-2 rounded-full hover:bg-gray-100 hover:cursor-pointer transition shadow" onClick={hdlDownload}><Download /> ดาวน์โหลด</button>
           </div>
         )}
       {/* </div> */}

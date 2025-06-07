@@ -1,0 +1,11 @@
+{
+    "userinfo": [
+        { "id": "1", "username": "nuttawoot_donut", "fullname": "นายณัฐวุฒิ ชาวนา", "position": "นักวชาการคอมพิวเตอร์" },
+        { "id": "2", "username": "taclublove", "fullname": "นายชนาธิป แข็งแรง", "position": "เจ้าพนักงานเครื่องคอมพิวเตอร์" },
+        { "id": "3", "username": "Pisamai", "fullname": "น.ส.พิศมัย คิอินธิ", "position": "เจ้าพนักงานเครื่องคอมพิวเตอร์" },
+        { "id": "4", "username": "waruneewora", "fullname": "น.ส.วารุณี วรบุตร", "position": "นักวชาการคอมพิวเตอร์" },
+        { "id": "5", "username": "wacitpon", "fullname": "นายวสิษฐ์พล ศรีสร้อย", "position": "นักวชาการคอมพิวเตอร์" },
+        { "id": "6", "username": "ediamin", "fullname": "นายภาสกร ไชยสาคร", "position": "พนักงานบริการ" },
+        { "id": "7", "username": "thaithank", "fullname": "นายธนาคม โคตรสมบัติ", "position": "พนักงานพิมพ์" }
+    ]
+}
