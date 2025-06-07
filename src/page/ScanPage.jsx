@@ -237,7 +237,7 @@ export default function ScanPage() {
               sound
               onScan={onScan}
               onError={(error) => console.error(error)}
-              constraints={{ facingMode: "environment" }}
+              constraints={{ deviceId: selectedDeviceId }}
               containerStyle={{ width: "100%", borderRadius: "0.75rem" }}
               videoStyle={{ width: "100%", borderRadius: "0.75rem" }}
             />
