@@ -148,20 +148,13 @@ export default function ScanPage() {
   };
 
     useEffect(() => {
-    // ต้องเรียก getUserMedia ก่อน
-    navigator.mediaDevices
-        .getUserMedia({ video: true }) // ขอแค่เปิดกล้องเพื่อให้ได้ permission
-        .then(() => navigator.mediaDevices.enumerateDevices())
-        .then((devices) => {
+        // ดึง list กล้องทั้งหมด
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
         const videoInputs = devices.filter((device) => device.kind === "videoinput");
         setCameras(videoInputs);
         if (videoInputs.length > 0) {
-            setSelectedDeviceId(videoInputs[0].deviceId);
+            setSelectedDeviceId(videoInputs[0].deviceId); // เลือกกล้องแรกเป็น default
         }
-        })
-        .catch((err) => {
-        console.error("Camera access error", err);
-        alert("ไม่สามารถเข้าถึงกล้องได้: " + err.message);
         });
     }, []);
 
