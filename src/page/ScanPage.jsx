@@ -26,6 +26,20 @@ export default function ScanPage() {
   const [userInfo, setUserInfo] = useState([]);
   const [user, setUser] = useState(null);
 
+  const [cameras, setCameras] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+
+  useEffect(() => {
+    // ดึง list กล้องทั้งหมด
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const videoInputs = devices.filter((device) => device.kind === "videoinput");
+      setCameras(videoInputs);
+      if (videoInputs.length > 0) {
+        setSelectedDeviceId(videoInputs[0].deviceId); // เลือกกล้องแรกเป็น default
+      }
+    });
+  }, []);
+
   useEffect(() => {
     getResult();
   }, [])
@@ -217,7 +231,8 @@ export default function ScanPage() {
         {/* Scanner */}
         <div className="w-full flex flex-col sm:flex-row rounded-2xl justify-between gap-4 border border-gray-200 p-4 shadow bg-white">
           {/* QR Scanner */}
-          <div className="w-full sm:w-1/2 overflow-hidden shadow rounded-xl">
+          
+          <div className="w-full sm:w-1/2 overflow-hidden shadow rounded-xl relative">
             <Scanner
               sound
               onScan={onScan}
@@ -226,6 +241,17 @@ export default function ScanPage() {
               containerStyle={{ width: "100%", borderRadius: "0.75rem" }}
               videoStyle={{ width: "100%", borderRadius: "0.75rem" }}
             />
+            <select
+                onChange={(e) => setSelectedDeviceId(e.target.value)}
+                value={selectedDeviceId || ""}
+                className=" absolute top-0"
+            >
+                {cameras.map((camera) => (
+                <option key={camera.deviceId} value={camera.deviceId}>
+                    {camera.label || `Camera ${camera.deviceId}`}
+                </option>
+                ))}
+            </select>
           </div>
 
           {/* Result Panel */}
