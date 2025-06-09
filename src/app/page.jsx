@@ -49,7 +49,8 @@ export default function Home() {
           training_name: rs.data.training_name,
           expire_date: expireDate.toISOString(),
         }
-        setSeat(rs.data?.result?.numbers[0]);
+
+        setSeat(rs.data?.number);
         setPerson(rs.data?.training_name);
         const payload = JSON.stringify(data)
         const hashData = await cryptoEncode(payload)
